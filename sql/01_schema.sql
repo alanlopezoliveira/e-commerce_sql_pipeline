@@ -90,6 +90,18 @@ CREATE TABLE dim_product (
     updated_at DATETIME
 );
 
+CREATE TABLE dim_date (
+    date_id DATE PRIMARY KEY,
+    year INT,
+    month INT,
+    day INT,
+    quarter INT,
+    week INT,
+    day_of_week INT,
+    day_name VARCHAR(20),
+    is_weekend INT
+);
+
 CREATE TABLE fct_sales (
     sales_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id VARCHAR(10),
@@ -101,5 +113,18 @@ CREATE TABLE fct_sales (
     created_at DATETIME,
     updated_at DATETIME,
     FOREIGN KEY (customer_id) REFERENCES dim_customer (customer_id),
-    FOREIGN KEY (product_id) REFERENCES dim_product (product_id)
+    FOREIGN KEY (product_id) REFERENCES dim_product (product_id),
+    FOREIGN KEY (sales_date) REFERENCES dim_date (date_id)
+);
+
+/* ---------- Audit & Rejection Log ---------- */
+DROP TABLE IF EXISTS reject_log;
+
+CREATE TABLE reject_log (
+    reject_id INT AUTO_INCREMENT PRIMARY KEY,
+    source_table VARCHAR(50),
+    source_id VARCHAR(50),
+    rejection_reason VARCHAR(255),
+    raw_data JSON,
+    rejected_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
